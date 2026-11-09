@@ -1,0 +1,50 @@
+name: Android 8 compatibility build
+
+# Builds the arm64 APK with minSdk 26 (Android 8.0) on demand.
+# Same recipe as the android job in ci.yml; kept separate so this branch only
+# runs the Android build.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [android-8-min26]
+
+jobs:
+  android:
+    name: Android arm64 APK (minSdk 26)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: client-core/go.mod
+          cache-dependency-path: client-core/go.sum
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+          cache: true
+      - name: Android SDK and NDK
+        run: |
+          test -n "$ANDROID_HOME" || export ANDROID_HOME=/usr/local/lib/android/sdk
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          sdk="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          test -x "$sdk" || sdk="$ANDROID_HOME/cmdline-tools/16.0/bin/sdkmanager"
+          ndk=$(ls -d "$ANDROID_HOME"/ndk/* 2>/dev/null | sort -V | tail -1)
+          if [[ -z "$ndk" ]]; then
+            "$sdk" --sdk_root="$ANDROID_HOME" "ndk;28.2.13676358" > /dev/null
+            ndk="$ANDROID_HOME/ndk/28.2.13676358"
+          fi
+          echo "ANDROID_NDK_HOME=$ndk" >> "$GITHUB_ENV"
+          echo "NDK=$ndk"
+      - name: Build Go core AAR and APK
+        run: ./scripts/build-android.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PasteFerry-android-arm64-min26
+          path: ui/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error

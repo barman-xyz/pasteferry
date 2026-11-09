@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.pasteferry.app"
-    // Android 9 起；target 36 不用申请 Android 17 的局域网权限
+    // Android 8.0 起（API 26）；target 36 不用申请 Android 17 的局域网权限
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
@@ -17,7 +17,7 @@ android {
 
     defaultConfig {
         applicationId = "com.pasteferry.app"
-        minSdk = 28
+        minSdk = 26
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName

@@ -75,7 +75,7 @@ mkdir -p ui/android/app/libs
 # -checklinkname=0：pion 的间接依赖 wlynxg/anet 用了 go:linkname（3.3.2 节第 2 条）
 (cd client-core && gomobile bind \
     -target=android/arm64 \
-    -androidapi 28 \
+    -androidapi 26 \
     -javapkg=com.pasteferry.core \
     -ldflags="-checklinkname=0 -s -w" \
     -o ../ui/android/app/libs/pasteferry-core.aar \

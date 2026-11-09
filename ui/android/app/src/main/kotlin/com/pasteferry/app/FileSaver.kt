@@ -13,7 +13,7 @@ import androidx.annotation.RequiresApi
 import java.io.File
 import java.io.IOException
 
-/** Android 9 使用按需授权的公共目录；Android 10+ 使用无需存储权限的 MediaStore。 */
+/** Android 8–9 使用按需授权的公共目录；Android 10+ 使用无需存储权限的 MediaStore。 */
 internal class FileSaver(private val context: Context) {
     fun needsStoragePermission(): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
